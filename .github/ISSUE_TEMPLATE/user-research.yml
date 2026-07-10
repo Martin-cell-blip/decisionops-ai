@@ -1,0 +1,53 @@
+name: Share a workflow story
+description: Contribute a recent settlement or merchant-decision story without confidential data.
+title: "[workflow story] "
+labels: ["user-research"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for helping improve DecisionOps AI. Describe a real recent workflow, not a hypothetical feature request. Do not include names, customer records, invoice numbers, credentials or other confidential information.
+  - type: dropdown
+    id: domain
+    attributes:
+      label: Domain
+      options:
+        - Settlement / reconciliation
+        - Merchant growth / SKU decision
+    validations:
+      required: true
+  - type: input
+    id: role
+    attributes:
+      label: Your role (generalized)
+      placeholder: e.g. small-business bookkeeper or marketplace operator
+    validations:
+      required: true
+  - type: textarea
+    id: recent_story
+    attributes:
+      label: Tell us about the last time this happened
+      description: What triggered the task and what did you do, in order?
+    validations:
+      required: true
+  - type: textarea
+    id: artifacts
+    attributes:
+      label: Which tools or files were involved?
+      description: General descriptions only; do not upload private records.
+    validations:
+      required: true
+  - type: textarea
+    id: friction
+    attributes:
+      label: Where did you pause, verify or ask for help?
+    validations:
+      required: true
+  - type: checkboxes
+    id: consent
+    attributes:
+      label: Research consent
+      options:
+        - label: I understand this issue will be public and may be anonymously summarized as product research.
+          required: true
+

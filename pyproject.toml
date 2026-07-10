@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=75", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "decisionops-ai"
+version = "0.1.0"
+description = "Evidence-grounded agents for settlement risk and merchant growth decisions"
+readme = "README.md"
+requires-python = ">=3.11"
+license = {text = "MIT"}
+authors = [{name = "Zhunming Ma"}]
+dependencies = [
+  "fastapi>=0.115",
+  "openai>=2.0",
+  "pydantic>=2.10",
+  "uvicorn>=0.34",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=9.0", "httpx>=0.28"]
+
+[project.scripts]
+decisionops = "decisionops.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+addopts = "-q"
+

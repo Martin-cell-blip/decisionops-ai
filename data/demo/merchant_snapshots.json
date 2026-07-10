@@ -1,0 +1,15 @@
+[
+  {
+    "merchant_id": "M001_HOMEWARE",
+    "period": "2026-Q2 demo snapshot",
+    "skus": [
+      {"sku": "HW-101", "price_band": "high", "gmv": 48500, "orders": 730, "views": 14500, "rating": 4.7, "margin_rate_assumption": 0.38, "stock_units": 620},
+      {"sku": "HW-102", "price_band": "high", "gmv": 31200, "orders": 420, "views": 9800, "rating": 4.6, "margin_rate_assumption": 0.41, "stock_units": 510},
+      {"sku": "HW-201", "price_band": "mid", "gmv": 15800, "orders": 390, "views": 12200, "rating": 4.1, "margin_rate_assumption": 0.29, "stock_units": 900},
+      {"sku": "HW-202", "price_band": "mid", "gmv": 7200, "orders": 185, "views": 8600, "rating": 3.2, "margin_rate_assumption": 0.31, "stock_units": 1150},
+      {"sku": "HW-301", "price_band": "low", "gmv": 2100, "orders": 105, "views": 7900, "rating": 4.0, "margin_rate_assumption": 0.16, "stock_units": 1800},
+      {"sku": "HW-302", "price_band": "low", "gmv": 150, "orders": 3, "views": 1100, "rating": 3.8, "margin_rate_assumption": 0.13, "stock_units": 420}
+    ]
+  }
+]
+

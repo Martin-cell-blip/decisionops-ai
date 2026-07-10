@@ -1,0 +1,51 @@
+[
+  {
+    "case_id": "S001_MATCH",
+    "contract_tolerance_pct": 0.02,
+    "invoice_lines": [{"line_id": "L001", "order_id": "O001", "billed_amount": 101.0}],
+    "orders": [{"order_id": "O001", "expected_amount": 100.0, "delivered": true}]
+  },
+  {
+    "case_id": "S002_DUPLICATE",
+    "contract_tolerance_pct": 0.02,
+    "invoice_lines": [
+      {"line_id": "L002A", "order_id": "O002", "billed_amount": 80.0},
+      {"line_id": "L002B", "order_id": "O002", "billed_amount": 80.0}
+    ],
+    "orders": [{"order_id": "O002", "expected_amount": 80.0, "delivered": true}]
+  },
+  {
+    "case_id": "S003_GHOST",
+    "contract_tolerance_pct": 0.02,
+    "invoice_lines": [{"line_id": "L003", "order_id": "GHOST-3", "billed_amount": 240.0}],
+    "orders": []
+  },
+  {
+    "case_id": "S004_NOT_DELIVERED",
+    "contract_tolerance_pct": 0.02,
+    "invoice_lines": [{"line_id": "L004", "order_id": "O004", "billed_amount": 65.0}],
+    "orders": [{"order_id": "O004", "expected_amount": 65.0, "delivered": false}]
+  },
+  {
+    "case_id": "S005_OVERBILLED",
+    "contract_tolerance_pct": 0.02,
+    "invoice_lines": [{"line_id": "L005", "order_id": "O005", "billed_amount": 130.0}],
+    "orders": [{"order_id": "O005", "expected_amount": 100.0, "delivered": true}]
+  },
+  {
+    "case_id": "S006_NOT_BILLED",
+    "contract_tolerance_pct": 0.02,
+    "invoice_lines": [],
+    "orders": [{"order_id": "O006", "expected_amount": 92.0, "delivered": true}]
+  },
+  {
+    "case_id": "S007_MIXED",
+    "contract_tolerance_pct": 0.02,
+    "invoice_lines": [
+      {"line_id": "L007A", "order_id": "O007", "billed_amount": 145.0},
+      {"line_id": "L007B", "order_id": "GHOST-7", "billed_amount": 55.0}
+    ],
+    "orders": [{"order_id": "O007", "expected_amount": 100.0, "delivered": true}]
+  }
+]
+

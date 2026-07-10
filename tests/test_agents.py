@@ -55,3 +55,28 @@ def test_valid_cited_narration_is_accepted():
     valid = review_settlement_case(case, FakeProvider(valid_text))
     assert valid.rationale == valid_text
     assert valid.trace[3].result == "Narrated by fake"
+    assert valid.narration_source == "model"
+
+
+def test_grouped_citations_are_normalized_then_verified():
+    # Observed live with ERNIE: grouped brackets like [E1, E1] are formatting, not invalid IDs.
+    case = settlement_cases()["S005_OVERBILLED"]
+    grouped = review_settlement_case(case, FakeProvider("Recover the variance [E1, E1]; approval is required."))
+    assert grouped.narration_source == "model"
+    assert "[E1][E1]" in grouped.rationale
+
+
+def test_grouped_citations_with_invalid_ids_still_fall_back():
+    # Normalization must not weaken verification: unknown IDs inside a group are rejected.
+    case = settlement_cases()["S005_OVERBILLED"]
+    grouped = review_settlement_case(case, FakeProvider("Recover the variance [E1, E99]; approval is required."))
+    assert grouped.narration_source == "template"
+    assert "deterministic checks" in grouped.rationale
+
+
+def test_thin_data_merchant_gets_no_recommendations():
+    decision = diagnose_merchant(merchant_snapshots()["M002_NEW_STORE"], NoModelProvider())
+    assert decision.recommendations == []
+    assert "Insufficient evidence" in decision.diagnosis
+    assert decision.narration_source == "template"
+    assert all(item.evidence_id in decision.diagnosis for item in decision.evidence)

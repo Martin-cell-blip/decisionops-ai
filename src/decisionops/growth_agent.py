@@ -3,6 +3,7 @@ from __future__ import annotations
 import re
 from statistics import median
 
+from .citations import normalize_citations, parse_citations
 from .providers import TextProvider, build_provider
 from .schemas import (
     AgentTrace,
@@ -17,11 +18,54 @@ def _rate(safe_numerator: float, denominator: float) -> float:
     return 0.0 if denominator <= 0 else safe_numerator / denominator
 
 
+# Below these observation counts, ranking SKUs is noise dressed up as advice.
+MIN_TOTAL_ORDERS = 30
+MIN_TOTAL_VIEWS = 500
+
+
+def _insufficient_evidence_decision(
+    snapshot: MerchantSnapshot, provider: TextProvider, total_orders: int, total_views: int
+) -> GrowthDecision:
+    evidence = [
+        Evidence(evidence_id="E1", source="merchant_snapshot", fact="total orders in period", value=total_orders),
+        Evidence(evidence_id="E2", source="merchant_snapshot", fact="total views in period", value=total_views),
+    ]
+    diagnosis = (
+        f"Insufficient evidence for {snapshot.period}: {total_orders} orders and {total_views} views "
+        f"are below the minimum observation thresholds ({MIN_TOTAL_ORDERS} orders, {MIN_TOTAL_VIEWS} views) "
+        "[E1][E2]. No SKU ranking is produced because it would present noise as a recommendation. "
+        "Collect more history or widen the period before acting."
+    )
+    trace = [
+        AgentTrace(step=1, operation="plan", result="Diagnose demand, conversion, margin assumption, quality and stock"),
+        AgentTrace(step=2, operation="execute_tools", result=f"Observed {total_orders} orders / {total_views} views - below evidence thresholds"),
+        AgentTrace(step=3, operation="narrate", result="Insufficient-evidence template; no model narration requested"),
+        AgentTrace(step=4, operation="human_gate", result="No actions proposed; nothing to approve"),
+    ]
+    return GrowthDecision(
+        merchant_id=snapshot.merchant_id,
+        diagnosis=diagnosis,
+        recommendations=[],
+        evidence=evidence,
+        trace=trace,
+        assumptions=[
+            "Thresholds are conservative defaults, not statistical power calculations.",
+            "No causal price elasticity is claimed without a randomized or quasi-experimental test.",
+        ],
+        model_provider=provider.name,
+        narration_source="template",
+    )
+
+
 def diagnose_merchant(
     snapshot: MerchantSnapshot,
     provider: TextProvider | None = None,
 ) -> GrowthDecision:
     provider = provider or build_provider()
+    total_orders = sum(item.orders for item in snapshot.skus)
+    total_views = sum(item.views for item in snapshot.skus)
+    if total_orders < MIN_TOTAL_ORDERS or total_views < MIN_TOTAL_VIEWS:
+        return _insufficient_evidence_decision(snapshot, provider, total_orders, total_views)
     trace = [AgentTrace(step=1, operation="plan", result="Diagnose demand, conversion, margin assumption, quality and stock")]
     total_gmv = sum(item.gmv for item in snapshot.skus) or 1.0
     conversions = [_rate(item.orders, item.views) for item in snapshot.skus]
@@ -101,7 +145,8 @@ def diagnose_merchant(
     )
     prompt = (
         "Write a two-sentence merchant diagnosis. Do not promise revenue. "
-        "Cite at least one supplied evidence ID in square brackets, for example [E3]. "
+        "Cite at least one supplied evidence ID in square brackets with exactly one ID per bracket, "
+        "like [E3] or [E3][E7]; never group IDs in one bracket such as [E3, E7]. "
         f"recommendations={[item.model_dump() for item in recommendations]}; "
         f"evidence={[item.model_dump() for item in evidence]}"
     )
@@ -109,13 +154,16 @@ def diagnose_merchant(
         system="You explain evidence-grounded merchant decisions and clearly separate observations from assumptions.",
         user=prompt,
     )
-    parsed_citations = set(re.findall(r"\[(E\d+)\]", generated or ""))
+    generated = normalize_citations(generated) if generated else generated
+    parsed_citations = parse_citations(generated)
     valid_citations = {item.evidence_id for item in evidence}
     if generated and parsed_citations and parsed_citations <= valid_citations:
         diagnosis = generated
+        narration_source = "model"
         trace.append(AgentTrace(step=3, operation="narrate", result=f"Narrated by {provider.name}"))
     else:
         diagnosis = fallback
+        narration_source = "template"
         trace.append(AgentTrace(step=3, operation="narrate", result="Used verified deterministic template"))
     trace.append(AgentTrace(step=4, operation="human_gate", result="Flagged price, scale and delist actions for approval"))
 
@@ -127,4 +175,5 @@ def diagnose_merchant(
         trace=trace,
         assumptions=assumptions,
         model_provider=provider.name,
+        narration_source=narration_source,
     )

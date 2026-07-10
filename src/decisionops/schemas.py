@@ -73,6 +73,7 @@ class SettlementDecision(BaseModel):
     evidence: list[Evidence]
     trace: list[AgentTrace]
     model_provider: str
+    narration_source: Literal["model", "template"] = "template"
 
 
 class SkuMetric(BaseModel):
@@ -110,4 +111,5 @@ class GrowthDecision(BaseModel):
     trace: list[AgentTrace]
     assumptions: list[str]
     model_provider: str
+    narration_source: Literal["model", "template"] = "template"
 

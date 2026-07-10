@@ -10,6 +10,14 @@
       {"sku": "HW-301", "price_band": "low", "gmv": 2100, "orders": 105, "views": 7900, "rating": 4.0, "margin_rate_assumption": 0.16, "stock_units": 1800},
       {"sku": "HW-302", "price_band": "low", "gmv": 150, "orders": 3, "views": 1100, "rating": 3.8, "margin_rate_assumption": 0.13, "stock_units": 420}
     ]
+  },
+  {
+    "merchant_id": "M002_NEW_STORE",
+    "period": "first 3 weeks after launch",
+    "skus": [
+      {"sku": "NS-001", "price_band": "mid", "gmv": 640, "orders": 9, "views": 210, "rating": 4.5, "margin_rate_assumption": 0.3, "stock_units": 80},
+      {"sku": "NS-002", "price_band": "low", "gmv": 180, "orders": 5, "views": 140, "rating": 5.0, "margin_rate_assumption": 0.22, "stock_units": 120}
+    ]
   }
 ]
 

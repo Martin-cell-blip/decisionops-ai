@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import os
+
 from fastapi import FastAPI, HTTPException, Query
 
 from .data import merchant_snapshots, settlement_cases
@@ -15,8 +17,18 @@ app = FastAPI(
 
 
 @app.get("/health")
-def health() -> dict[str, str]:
-    return {"status": "ok"}
+def health() -> dict:
+    # Key presence only - a silent narration downgrade (e.g. quota errors) should be
+    # diagnosable from here without reading agent traces. Secrets never leave the process.
+    return {
+        "status": "ok",
+        "default_provider": os.getenv("LLM_PROVIDER", "none"),
+        "providers": {
+            "none": True,
+            "openai": bool(os.getenv("OPENAI_API_KEY")),
+            "qianfan": bool(os.getenv("QIANFAN_API_KEY")),
+        },
+    }
 
 
 @app.get("/api/demo")

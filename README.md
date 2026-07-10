@@ -18,7 +18,8 @@ The design is intentionally conservative: deterministic Python owns calculations
 | Offline decision paths | Tested | 200/200 seeded binary eval cases pass |
 | API | Tested | FastAPI health, catalogue and both agent endpoints |
 | OpenAI narration | Live-tested | `gpt-4.1-mini` on one settlement and one growth case |
-| Baidu Qianfan narration | Live-tested | `ernie-5.1` and `ernie-4.5-turbo-32k` on settlement and growth cases; grouped-citation outputs fall back to the verified template by design ([details](docs/eval_history.md)) |
+| Baidu Qianfan narration | Live-tested | `ernie-5.1` and `ernie-4.5-turbo-32k`; after citation normalization, 6/6 live calls accepted with verification unweakened ([details](docs/eval_history.md)) |
+| Thin-data guard | Tested | Growth Agent returns an explicit insufficient-evidence decision with no recommendations below 30 orders / 500 views (`M002_NEW_STORE`) |
 | Public user evidence | Collected | 12 sourced behavior records |
 | First-party interviews | Not yet completed | Interview guide and empty log are included |
 | Business impact / PMF | Not claimed | Requires a real pilot and willingness-to-pay test |
@@ -110,6 +111,7 @@ src/decisionops/
   settlement_agent.py  # evidence checks + policy + narration verifier
   growth_agent.py      # SKU diagnosis + reversible experiments
   providers.py         # none / OpenAI / Baidu Qianfan
+  citations.py         # citation normalization + parsing (format tolerance, strict IDs)
   schemas.py           # typed inputs, decisions, evidence and traces
   api.py               # FastAPI endpoints
 data/demo/              # disclosed synthetic demo records

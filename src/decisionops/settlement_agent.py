@@ -3,6 +3,7 @@ from __future__ import annotations
 from collections import Counter, defaultdict
 import re
 
+from .citations import normalize_citations, parse_citations
 from .providers import TextProvider, build_provider
 from .schemas import (
     AgentTrace,
@@ -132,7 +133,8 @@ def review_settlement_case(
     cited_ids = [item.evidence_id for item in evidence]
     prompt = (
         "Write a concise finance-operations rationale. Do not change the classification or action. "
-        "Cite evidence IDs in square brackets, for example [E3]. "
+        "Cite evidence IDs in square brackets with exactly one ID per bracket, like [E1] or [E1][E2]; "
+        "never group IDs in one bracket such as [E1, E2]. "
         "State that human approval is required before the action. If evidence is insufficient, explicitly say so.\n"
         f"classification={classification}; action={action}; variance={variance}; "
         f"evidence={[item.model_dump() for item in evidence]}"
@@ -141,14 +143,17 @@ def review_settlement_case(
         system="You explain bounded settlement decisions. Never invent documents, amounts or approvals.",
         user=prompt,
     )
-    parsed_citations = set(re.findall(r"\[(E\d+)\]", generated or ""))
+    generated = normalize_citations(generated) if generated else generated
+    parsed_citations = parse_citations(generated)
     valid_citations = set(cited_ids)
     approval_stated = action == "PAY" or "approval" in (generated or "").lower()
     if generated and parsed_citations and parsed_citations <= valid_citations and approval_stated:
         rationale = generated
+        narration_source = "model"
         trace.append(AgentTrace(step=4, operation="narrate", result=f"Narrated by {provider.name}"))
     else:
         rationale = fallback
+        narration_source = "template"
         trace.append(AgentTrace(step=4, operation="narrate", result="Used verified deterministic template"))
 
     approval_required = action != "PAY"
@@ -167,4 +172,5 @@ def review_settlement_case(
         evidence=evidence,
         trace=trace,
         model_provider=provider.name,
+        narration_source=narration_source,
     )

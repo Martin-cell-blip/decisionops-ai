@@ -42,3 +42,10 @@ Live calls through the OpenAI-compatible `/v2` endpoint with a real `QIANFAN_API
 2. **Account quota.** `ernie-5.1` is a paid tier; after the trial quota the endpoint returns `403 account_overdue`. `ernie-4.5-turbo-32k` remained available. Provider errors never reached the decision path - the documented degradation contract held in production conditions.
 3. **Invalid model ids.** Legacy names (`ernie-speed-8k`, `ernie-lite-8k`) return `401 invalid_model` on the v2 endpoint.
 
+### Fixes applied and re-verified (2026-07-10)
+
+1. **Prompt tightening** (demand one ID per bracket) raised ERNIE growth-narration acceptance to 2/4 - better, still flaky.
+2. **Citation normalization** (`citations.py`): `[E1, E2]` is rewritten to `[E1][E2]` *before* verification. This removes formatting brittleness without weakening the guarantee - every ID is still checked against the evidence list, and a regression test proves grouped citations containing an unknown ID still fall back.
+3. **Re-verification**: 6/6 live ERNIE calls accepted (growth 4/4, settlement 2/2) after normalization; 9/9 unit tests and 200/200 seeded evals unchanged.
+4. Also shipped from the same failure analysis: `narration_source` field on both decisions, provider key status in `/health`, and a thin-data guard - the Growth Agent now returns an explicit insufficient-evidence decision with **no recommendations** below 30 orders / 500 views (demo merchant `M002_NEW_STORE`), instead of ranking noise.
+

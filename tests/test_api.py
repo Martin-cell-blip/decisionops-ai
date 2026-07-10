@@ -7,10 +7,13 @@ client = TestClient(app)
 
 
 def test_health_and_catalogue():
-    assert client.get("/health").json() == {"status": "ok"}
+    health = client.get("/health").json()
+    assert health["status"] == "ok"
+    assert set(health["providers"]) == {"none", "openai", "qianfan"}
     catalogue = client.get("/api/demo").json()
     assert "S001_MATCH" in catalogue["settlement_case_ids"]
     assert "M001_HOMEWARE" in catalogue["merchant_ids"]
+    assert "M002_NEW_STORE" in catalogue["merchant_ids"]
 
 
 def test_demo_endpoints():

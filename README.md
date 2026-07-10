@@ -18,7 +18,7 @@ The design is intentionally conservative: deterministic Python owns calculations
 | Offline decision paths | Tested | 200/200 seeded binary eval cases pass |
 | API | Tested | FastAPI health, catalogue and both agent endpoints |
 | OpenAI narration | Live-tested | `gpt-4.1-mini` on one settlement and one growth case |
-| Baidu Qianfan adapter | Implemented, not live-tested | OpenAI-compatible `/v2` client; requires `QIANFAN_API_KEY` |
+| Baidu Qianfan narration | Live-tested | `ernie-5.1` and `ernie-4.5-turbo-32k` on settlement and growth cases; grouped-citation outputs fall back to the verified template by design ([details](docs/eval_history.md)) |
 | Public user evidence | Collected | 12 sourced behavior records |
 | First-party interviews | Not yet completed | Interview guide and empty log are included |
 | Business impact / PMF | Not claimed | Requires a real pilot and willingness-to-pay test |
@@ -99,6 +99,7 @@ The repository separates evidence types:
 - [`interview_log.csv`](docs/research/interview_log.csv): empty first-party research log.
 - [`recruitment_copy.md`](docs/research/recruitment_copy.md): screening and outreach copy; the repository also includes a public workflow-story issue template.
 - [`synthesis.md`](docs/research/synthesis.md): current behavioral clusters and product decisions.
+- [`synthetic_panel.csv`](docs/research/synthetic_panel.csv) + [`synthetic_panel_findings.md`](docs/research/synthetic_panel_findings.md): a 30-persona **LLM-generated synthetic panel**, clearly labeled, used only to generate hypotheses and stress-test the interview guide. Synthetic responses are never counted as user evidence.
 
 No first-party interview, time-saved figure, revenue lift or willingness-to-pay result is claimed at launch.
 

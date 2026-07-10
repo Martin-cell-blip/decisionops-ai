@@ -5,6 +5,7 @@
 - 12 public behavior records collected from bookkeeping, Amazon Seller and Shopify communities.
 - 0 first-party interviews completed as of initial repository build.
 - Public posts are desk research and must not be described as interviews.
+- 30-persona **synthetic panel** added 2026-07-10 ([synthetic_panel.csv](synthetic_panel.csv), [findings](synthetic_panel_findings.md)) for hypothesis generation only; synthetic responses never count toward the participant threshold.
 
 ## Emerging behavioral clusters
 
@@ -31,4 +32,5 @@ Users repeatedly describe checking reports, clearing accounts, dates and compone
 3. Gate reject, recover, price, scale and delist actions.
 4. Treat refunds, reserves and cross-period events as the next settlement data-model expansion.
 5. Recruit 7-14 action-qualified participants before claiming validated demand.
+6. Queue hypotheses H1-H5 from the synthetic panel for real-interview validation; apply the three interview-guide changes (reviewer screener, time-split prompt, thin-data prototype case).
 

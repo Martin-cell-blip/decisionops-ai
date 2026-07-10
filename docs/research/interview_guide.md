@@ -17,6 +17,10 @@ Recruit 7-14 participants who have taken recent action to solve the problem:
 
 Do not recruit people who only express general interest in AI. Prior behavior is required.
 
+Screener (added 2026-07-10, tests hypothesis H2 in [synthetic_panel_findings.md](synthetic_panel_findings.md)):
+
+> Do you review someone else's reconciliation or merchant decisions, or does someone review yours?
+
 ## Opening and consent
 
 > I am researching how people currently make settlement or merchant decisions. This is not a sales call. With your permission I will take notes; I will not publish your name or company. You can skip any question or stop at any time.
@@ -29,6 +33,7 @@ Do not recruit people who only express general interest in AI. Prior behavior is
 4. What evidence did you need before rejecting, recovering or paying the amount?
 5. What happened when the exception crossed a month-end or involved a refund?
 6. What have you already tried to automate? What broke or created more work?
+7. Of your last exception, how much time went to finding the mismatch versus explaining and deciding it? (added 2026-07-10, tests H1)
 
 ## Story prompts - merchant growth
 
@@ -48,7 +53,8 @@ Do not recruit people who only express general interest in AI. Prior behavior is
 
 ## Prototype test (only after discovery)
 
-Show one case without explaining it. Ask the participant to think aloud:
+Show two cases without explaining them: one normal case and one thin-data merchant case where the
+correct output is "insufficient evidence" (added 2026-07-10, tests H5). Ask the participant to think aloud:
 
 - What do you believe happened?
 - What would you verify next?

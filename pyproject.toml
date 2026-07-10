@@ -19,6 +19,7 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = ["pytest>=9.0", "httpx>=0.28"]
+data = ["duckdb>=1.0"]
 
 [project.scripts]
 decisionops = "decisionops.cli:main"

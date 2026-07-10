@@ -1,8 +1,8 @@
 # DecisionOps AI
 
-**Evidence-grounded agents for settlement risk and merchant growth decisions.**
+**Evidence-grounded agents for settlement risk and merchant growth decisions — running on real e-commerce data.**
 
-[Live interactive demo](https://martin-cell-blip.github.io/decisionops-ai/) · [Product requirements](docs/PRD.md) · [User evidence synthesis](docs/research/synthesis.md)
+[Live bilingual site](https://martin-cell-blip.github.io/decisionops-ai/) (EN/中文) · [中文 README](README.zh-CN.md) · [Product requirements](docs/PRD.md) · [User evidence synthesis](docs/research/synthesis.md)
 
 DecisionOps AI contains two bounded agents in one new project:
 
@@ -10,6 +10,21 @@ DecisionOps AI contains two bounded agents in one new project:
 - **Growth Agent** ranks SKU quality, cash-release, scale and price-test opportunities without presenting assumptions as causal forecasts.
 
 The design is intentionally conservative: deterministic Python owns calculations and policy, an optional LLM writes cited explanations, a verifier rejects invalid `[E#]` references, and a human approves consequential actions.
+
+## Real data
+
+The live site and the committed data bundles run on the public **Olist Brazilian e-commerce dataset** (2016-10 ~ 2018-08: 112,650 order lines, ~R$13.6M GMV, 3,095 sellers) plus a carrier-bill pipeline with labeled injected anomalies (99,485 bill lines):
+
+- **24 real merchants** (including 2 deliberately thin ones that trigger the insufficient-evidence guard on real data). Decisions are precomputed by the repository's Python agents via `scripts/build_real_datasets.py` — the web page renders agent output, it does not fake it.
+- **30 real settlement cases** — every classification is checked against the injection ground truth (30/30 consistent).
+- **Per-field provenance**: real (straight from Olist) / proxy (derived, disclosed formula) / assumption (placeholder) / synthetic (deterministic, disclosed). Unobservable fields are never passed off as data.
+
+## The live site
+
+- **Growth explorer**: browse decision queues, evidence chains and provenance-badged SKU tables for 24 real sellers.
+- **Settlement workbench**: review 30 real cases and approve/reject them; your approval queue persists in localStorage.
+- **Bring your own data**: drop a SKU CSV or an invoice CSV and run the same decision logic entirely inside the browser tab — nothing is uploaded. The in-page engine is a documented JS mirror; the Python package remains canonical.
+- **Bilingual**: one-click EN/中文 toggle, persisted.
 
 ## Verified status
 
@@ -20,6 +35,7 @@ The design is intentionally conservative: deterministic Python owns calculations
 | OpenAI narration | Live-tested | `gpt-4.1-mini` on one settlement and one growth case |
 | Baidu Qianfan narration | Live-tested | `ernie-5.1` and `ernie-4.5-turbo-32k`; after citation normalization, 6/6 live calls accepted with verification unweakened ([details](docs/eval_history.md)) |
 | Thin-data guard | Tested | Growth Agent returns an explicit insufficient-evidence decision with no recommendations below 30 orders / 500 views (`M002_NEW_STORE`) |
+| Real-data consistency | Tested | 30 real carrier-bill cases classified consistently with injected ground truth (30/30) |
 | Public user evidence | Collected | 12 sourced behavior records |
 | First-party interviews | Not yet completed | Interview guide and empty log are included |
 | Business impact / PMF | Not claimed | Requires a real pilot and willingness-to-pay test |
@@ -116,8 +132,9 @@ src/decisionops/
   api.py               # FastAPI endpoints
 data/demo/              # disclosed synthetic demo records
 scripts/run_evals.py    # 200-case executable PRD
+scripts/build_real_datasets.py  # Olist -> real merchant/settlement bundles (agent-computed)
 tests/                  # unit and API tests
-docs/                   # live demo, PRD and user research
+docs/                   # bilingual live site (assets/, data/), PRD and user research
 ```
 
 ## Run the API
